@@ -46,8 +46,7 @@ elif [ "$1" == "set" ]; then
             ln -fs /code/resolv/$2.resolv.conf /etc/resolv.conf
             exit $?
         else
-            echo "ERROR: Target file '/code/resolv/$2.resolv.conf' does not exists!"
-            exit 1
+            echo "DNS already set to $2"
         fi
     else
         echo "ERROR: Target file '/code/resolv/$2.resolv.conf' does not exists!"
