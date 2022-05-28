@@ -1,0 +1,67 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+    echo "Expecting at least one parameter, received $#"
+    echo "Type '$0 help' for help"
+    exit 1
+fi
+
+## Gathering facts
+if [ $(readlink /etc/resolv.conf) ]; then
+    B_resolv_isLink=true
+    T_link_dst=$(readlink /etc/resolv.conf)
+    T_dst_name=$(readlink /etc/resolv.conf | sed -e 's%/code/resolv/%%g; s%.resolv.conf%%g')
+    T_avail_dst=$(for T_file in /code/resolv/*.resolv.conf; do echo -n "$T_file "; done | sed -e 's%/code/resolv/%%g; s%.resolv.conf%%g; s%[[:space:]]*$%%g')
+else
+    echo "'/etc/resolv.conf' is not a link"
+    exit 1
+fi
+
+## Setting variables for output formating
+bold=$(tput bold)
+underline=$(tput smul)
+normal=$(tput sgr0)
+
+if [ "$1" == "status" ]; then
+    echo "DNS is set to: $T_dst_name"
+    if [ "$2" == "full" ]; then
+        grep "nameserver" /etc/resolv.conf
+    fi
+    exit 0
+elif [ "$1" == "set" ]; then
+    if [ $# -lt 2 ]; then
+        echo "${bold}set${normal} action requires a second parameter"
+        echo "Available configurations:"
+        for T_dst in $T_avail_dst; do
+            echo "  $T_dst"
+        done
+        exit 1
+    fi
+    if [ "$EUID" -ne 0 ]; then
+        echo "ERROR: need to be elevated to change DNS"
+        exit 1
+    fi
+    if [ -f "/code/resolv/$2.resolv.conf" ]; then
+        if [ "$T_link_dst" != "/code/resolv/$2.resolv.conf" ]; then
+            ln -fs /code/resolv/$2.resolv.conf /etc/resolv.conf
+            exit $?
+        else
+            echo "ERROR: Target file '/code/resolv/$2.resolv.conf' does not exists!"
+            exit 1
+        fi
+    else
+        echo "ERROR: Target file '/code/resolv/$2.resolv.conf' does not exists!"
+        exit 1
+    fi
+elif [ "$1" == "help" ] || [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+    echo -e "$0 COMMAND [SCOPE...]"
+    echo -e "\n${bold}Query or set DNS for the whole system.${normal}"
+    echo -e "\n${underline}Unit Commands:${normal}"
+    echo -e "   status        Get current status of the DNS"
+    echo -e "   set [SCOPE]   Set the DNS to SCOPE ($T_avail_dst)"
+    echo -e ""
+else
+    echo "ERROR: verb '$1' not known."
+    exit 1
+fi
+
