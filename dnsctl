@@ -47,6 +47,7 @@ elif [ "$1" == "set" ]; then
             exit $?
         else
             echo "WARNING: DNS already set to $2"
+            exit 1
         fi
     else
         echo "ERROR: Target file '/code/resolv/$2.resolv.conf' does not exists!"
