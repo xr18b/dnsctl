@@ -3,8 +3,7 @@
 '''
 Importing requried libraries
 '''
-from os import symlink, path, listdir, readlink, remove
-from re import match
+from os import symlink, path, readlink, remove
 from sys import exit
 import argparse
 import glob
