@@ -16,11 +16,12 @@ G_resolv_path = "/etc/resolv.conf" # Where the 'resolv.conf' file is store on th
 G_resolv_isLink = path.islink(G_resolv_path) # Wether the 'resolv.conf' file is already a symlink
 if G_resolv_isLink : G_init_dst = readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
 
-'''
-This function will return a string containing the names of all available destination file
-Note the file names will get trimmed from the '.resolv.conf' that they need to have at the end
-'''
+
 def get_available_dst():
+    '''
+    Return a string containing the names of all available destination file
+    Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
+    '''
     if path.exists(G_dst_dir) and path.isdir(G_dst_dir):
         T_files = listdir(G_dst_dir)
         T_dst = ""
@@ -35,6 +36,24 @@ def get_available_dst():
             exit("ERROR: No destination file available in '" + G_dst_dir + "'")
 
         return T_dst
+    else:
+        exit("ERROR: Directory '" + G_dst_dir + "' does not exist")
+
+
+def set_destination(new_dest: str):
+    """
+    Change the '/etc/resolv.conf' link to a new destination
+    """
+    print("__set config to: " + new_dest + "__")
+    exit()
+
+
+def get_destination():
+    """
+    Print the current destination of '/etc/resolv.conf'
+    """
+    print("DNS is set to: " + G_init_dst.replace(G_dst_dir, "").replace(".resolv.conf", ""))
+    exit()
 
 
 def main() -> None:
@@ -43,8 +62,7 @@ def main() -> None:
 
     parser.add_argument('-s', '--set',
                         required=False,
-                        action="store_true",
-                        default=False,
+                        metavar="SCOPE",
                         help="Set the DNS to a new scope (" + get_available_dst() + ")")
 
     parser.add_argument('-g', '--get',
@@ -54,6 +72,18 @@ def main() -> None:
                         help="Get the name of the currently used profile")
 
     args = parser.parse_args()
+
+    if not G_resolv_isLink:
+        print("ERROR: '" + G_resolv_path + "' is not a symlink")
+        exit()
+
+    if args.get:
+        get_destination()
+
+    if args.set:
+        set_destination(new_dest=args.set)
+
+    parser.print_help()
 
 
 if __name__ == "__main__":
