@@ -18,7 +18,7 @@ G_resolv_isLink = path.islink(G_resolv_path) # Wether the 'resolv.conf' file is 
 if G_resolv_isLink : G_init_dst = readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
 
 
-def get_available_dst():
+def get_available_dst() -> str:
     '''
     Return a string containing the names of all available destination file
     Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
