@@ -3,7 +3,7 @@
 '''
 Importing requried libraries
 '''
-from os import symlink, path, listdir, readlink
+from os import symlink, path, listdir, readlink, remove
 from re import match
 from sys import exit
 import argparse
@@ -44,8 +44,27 @@ def set_destination(new_dest: str):
     """
     Change the '/etc/resolv.conf' link to a new destination
     """
-    print("__set config to: " + new_dest + "__")
-    exit()
+    target = G_dst_dir + new_dest + ".resolv.conf"
+    if path.exists(target):
+
+        try:
+            remove(G_resolv_path)
+        except PermissionError as error:
+            exit("ERROR: you are not allowed to change DNS")
+        except Exception as error:
+            print("Error while deleting the old link")
+            exit(error)
+            
+        try:
+            symlink(target, G_resolv_path)
+        except PermissionError as error:
+            exit("ERROR: you are not allowed to change DNS")
+        except Exception as error:
+            exit(error)
+
+        exit()
+    else:
+        exit("ERROR: '" + target + ".resolv.conf' does not exist")
 
 
 def get_destination():
