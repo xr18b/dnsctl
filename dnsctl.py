@@ -23,13 +23,13 @@ def get_available_dst() -> str:
     Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
     '''
     if not path.exists(G_dst_dir) or not path.isdir(G_dst_dir):
-        exit(f"ERROR: Directory '{G_dst_dir}' does not exist")
+        raise NotADirectoryError('Directory \'{}\' does not exist!'.format(G_dst_dir))
 
     _glob_files = glob.glob(path.join(G_dst_dir, '*.resolv.conf'))
     if len(_glob_files) < 1:
-        exit(f"ERROR: No destination file available in '{G_dst_dir}'")
-    return ' '.join([path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
+        raise FileNotFoundError('No destination file available in \'{}\' does not exist!'.format(G_dst_dir))
 
+    return ' '.join([path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
 
 def set_destination(new_dest: str):
     """
@@ -67,13 +67,23 @@ def get_destination():
 
 
 def main() -> None:
+
+    try:
+        L_available_dst = get_available_dst()
+    except NotADirectoryError as error:
+        exit(f"ERROR: Directory '{G_dst_dir}' does not exists")
+    except FileNotFoundError as error:
+        exit(f"ERROR: No destination file available in '{G_dst_dir}'")
+    except Exception as error:
+        exit(f"ERROR: {error}")
+
     parser = argparse.ArgumentParser(usage="%(prog)s [options]",
                                      description="Set DNS for the whole system, or query status of current DNS configuration.")
 
     parser.add_argument('-s', '--set',
                         required=False,
                         metavar="SCOPE",
-                        help="Set the DNS to a new scope (" + get_available_dst() + ")")
+                        help="Set the DNS to a new scope (" + L_available_dst + ")")
 
     parser.add_argument('-g', '--get',
                         required=False,
