@@ -1,12 +1,12 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 '''
 Importing requried libraries
 '''
-from os import symlink, path, listdir, readlink, remove
-from re import match
+from os import symlink, path, readlink, remove
 from sys import exit
 import argparse
+import glob
 
 '''
 Defining global variables
@@ -17,27 +17,18 @@ G_resolv_isLink = path.islink(G_resolv_path) # Wether the 'resolv.conf' file is 
 if G_resolv_isLink : G_init_dst = readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
 
 
-def get_available_dst():
+def get_available_dst() -> str:
     '''
     Return a string containing the names of all available destination file
     Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
     '''
-    if path.exists(G_dst_dir) and path.isdir(G_dst_dir):
-        T_files = listdir(G_dst_dir)
-        T_dst = ""
-        for this_file in T_files:
-            if match('.*\.resolv\.conf', this_file):
-                if len(T_dst) == 0:
-                    T_dst += this_file.replace(".resolv.conf", "")
-                else:
-                    T_dst += " " + this_file.replace(".resolv.conf", "")
+    if not path.exists(G_dst_dir) or not path.isdir(G_dst_dir):
+        exit(f"ERROR: Directory '{G_dst_dir}' does not exist")
 
-        if len(T_dst) == 0:
-            exit("ERROR: No destination file available in '" + G_dst_dir + "'")
-
-        return T_dst
-    else:
-        exit("ERROR: Directory '" + G_dst_dir + "' does not exist")
+    _glob_files = glob.glob(path.join(G_dst_dir, '*.resolv.conf'))
+    if len(_glob_files) < 1:
+        exit(f"ERROR: No destination file available in '{G_dst_dir}'")
+    return ' '.join([path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
 
 
 def set_destination(new_dest: str):
