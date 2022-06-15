@@ -62,8 +62,8 @@ def get_destination():
     """
     Print the current destination of '/etc/resolv.conf'
     """
-    print("DNS is set to: " + G_init_dst.replace(G_dst_dir, "").replace(".resolv.conf", ""))
-    exit()
+    _cur_dst = G_init_dst.replace(G_dst_dir, "").replace(".resolv.conf", "")
+    print(f"DNS is set to: {_cur_dst}")
 
 
 def main() -> None:
@@ -93,12 +93,12 @@ def main() -> None:
 
     args = parser.parse_args()
 
-    if not G_resolv_isLink:
-        print("ERROR: '" + G_resolv_path + "' is not a symlink")
-        exit()
-
     if args.get:
+        if not G_resolv_isLink:
+            exit(f"ERROR: '{G_resolv_path}' is not a symlink")
+
         get_destination()
+        return
 
     if args.set:
         set_destination(new_dest=args.set)
