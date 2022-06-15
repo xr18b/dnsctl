@@ -31,7 +31,7 @@ def get_available_dst() -> str:
 
     return ' '.join([path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
 
-def set_destination(new_dest: str):
+def set_destination(new_dest: str) -> None:
     """
     Change the '/etc/resolv.conf' link to a new destination
     """
@@ -43,7 +43,7 @@ def set_destination(new_dest: str):
         raise FileNotFoundError('Destination not found: \'{}\''.format(_target))
 
 
-def get_destination():
+def get_destination() -> None:
     """
     Print the current destination of '/etc/resolv.conf'
     """
