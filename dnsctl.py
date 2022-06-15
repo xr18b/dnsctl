@@ -35,27 +35,12 @@ def set_destination(new_dest: str):
     """
     Change the '/etc/resolv.conf' link to a new destination
     """
-    target = G_dst_dir + new_dest + ".resolv.conf"
-    if path.exists(target):
-
-        try:
-            remove(G_resolv_path)
-        except PermissionError as error:
-            exit("ERROR: you are not allowed to change DNS")
-        except Exception as error:
-            print("Error while deleting the old link")
-            exit(error)
-            
-        try:
-            symlink(target, G_resolv_path)
-        except PermissionError as error:
-            exit("ERROR: you are not allowed to change DNS")
-        except Exception as error:
-            exit(error)
-
-        exit()
+    _target = G_dst_dir + new_dest + ".resolv.conf"
+    if path.exists(_target):
+        remove(G_resolv_path)
+        symlink(_target, G_resolv_path)
     else:
-        exit("ERROR: '" + target + ".resolv.conf' does not exist")
+        raise FileNotFoundError('Destination not found: \'{}\''.format(_target))
 
 
 def get_destination():
@@ -101,10 +86,22 @@ def main() -> None:
         return
 
     if args.set:
-        set_destination(new_dest=args.set)
+        if not G_resolv_isLink:
+            exit(f"ERROR: '{G_resolv_path}' is not a symlink")
+
+        try:
+            set_destination(new_dest=args.set)
+        except PermissionError as error:
+            exit(f"ERROR: You are not allowed to change DNS")
+        except FileNotFoundError as error:
+            exit(f"ERROR: Destination \'{args.set}\' does not exists")
+        except Exception as error:
+            exit(f"ERROR: {error}")
+        return
 
     parser.print_help()
 
 
 if __name__ == "__main__":
     main()
+
