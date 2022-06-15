@@ -3,18 +3,18 @@
 '''
 Importing requried libraries
 '''
-from os import symlink, path, readlink, remove
-from sys import exit
+import os
 import argparse
 import glob
+from sys import exit
 
 '''
 Defining global variables
 '''
 G_dst_dir = "/code/resolv/" # Where the destination files are stored
 G_resolv_path = "/etc/resolv.conf" # Where the 'resolv.conf' file is store on the system
-G_resolv_isLink = path.islink(G_resolv_path) # Wether the 'resolv.conf' file is already a symlink
-if G_resolv_isLink : G_init_dst = readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
+G_resolv_isLink = os.path.islink(G_resolv_path) # Wether the 'resolv.conf' file is already a symlink
+if G_resolv_isLink : G_init_dst = os.readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
 
 
 def get_available_dst() -> str:
@@ -22,23 +22,24 @@ def get_available_dst() -> str:
     Return a string containing the names of all available destination file
     Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
     '''
-    if not path.exists(G_dst_dir) or not path.isdir(G_dst_dir):
+    if not os.path.exists(G_dst_dir) or not os.path.isdir(G_dst_dir):
         raise NotADirectoryError('Directory \'{}\' does not exist!'.format(G_dst_dir))
 
-    _glob_files = glob.glob(path.join(G_dst_dir, '*.resolv.conf'))
+    _glob_files = glob.glob(os.path.join(G_dst_dir, '*.resolv.conf'))
     if len(_glob_files) < 1:
         raise FileNotFoundError('No destination file available in \'{}\' does not exist!'.format(G_dst_dir))
 
-    return ' '.join([path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
+    return ' '.join([os.path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
+
 
 def set_destination(new_dest: str) -> None:
     """
     Change the '/etc/resolv.conf' link to a new destination
     """
     _target = G_dst_dir + new_dest + ".resolv.conf"
-    if path.exists(_target):
-        remove(G_resolv_path)
-        symlink(_target, G_resolv_path)
+    if os.path.exists(_target):
+        os.remove(G_resolv_path)
+        os.symlink(_target, G_resolv_path)
     else:
         raise FileNotFoundError('Destination not found: \'{}\''.format(_target))
 
