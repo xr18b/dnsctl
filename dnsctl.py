@@ -28,7 +28,7 @@ def get_available_dst() -> str:
 
     _glob_files = glob.glob(os.path.join(G_dst_dir, '*.resolv.conf'))
     if len(_glob_files) < 1:
-        raise FileNotFoundError('No destination file available in \'{}\' does not exist!'.format(G_dst_dir))
+        raise FileNotFoundError('No destination file available in \'{}\'!'.format(G_dst_dir))
 
     return ' '.join([os.path.basename(file).removesuffix('.resolv.conf') for file in _glob_files])
 
