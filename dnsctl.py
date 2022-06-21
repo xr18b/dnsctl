@@ -67,12 +67,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(usage="%(prog)s [options]",
                                      description="Set DNS for the whole system, or query status of current DNS configuration.")
 
-    parser.add_argument('-s', '--set',
+    arg_group = parser.add_mutually_exclusive_group() # The 'set' and 'get' arguments cannot be used at the same time
+
+    arg_group.add_argument('-s', '--set',
                         required=False,
                         metavar="SCOPE",
                         help="Set the DNS to a new scope (" + L_available_dst + ")")
 
-    parser.add_argument('-g', '--get',
+    arg_group.add_argument('-g', '--get',
                         required=False,
                         action="store_true",
                         default=False,
