@@ -96,7 +96,7 @@ def main() -> None:
         try:
             set_destination(new_dest=args.set)
         except PermissionError:
-            exit(f"ERROR: You are not allowed to change DNS")
+            exit("ERROR: You are not allowed to change DNS")
         except FileNotFoundError:
             exit(f"ERROR: Destination \'{args.set}\' does not exists")
         except Exception as error:
