@@ -57,9 +57,9 @@ def main() -> None:
 
     try:
         L_available_dst = get_available_dst()
-    except NotADirectoryError as error:
+    except NotADirectoryError:
         exit(f"ERROR: Directory '{G_dst_dir}' does not exists")
-    except FileNotFoundError as error:
+    except FileNotFoundError:
         exit(f"ERROR: No destination file available in '{G_dst_dir}'")
     except Exception as error:
         exit(f"ERROR: {error}")
@@ -95,9 +95,9 @@ def main() -> None:
 
         try:
             set_destination(new_dest=args.set)
-        except PermissionError as error:
+        except PermissionError:
             exit(f"ERROR: You are not allowed to change DNS")
-        except FileNotFoundError as error:
+        except FileNotFoundError:
             exit(f"ERROR: Destination \'{args.set}\' does not exists")
         except Exception as error:
             exit(f"ERROR: {error}")
