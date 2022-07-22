@@ -70,15 +70,15 @@ def main() -> None:
     arg_group = parser.add_mutually_exclusive_group()  # The 'set' and 'get' arguments cannot be used at the same time
 
     arg_group.add_argument('-s', '--set',
-                        required=False,
-                        metavar="SCOPE",
-                        help="Set the DNS to a new scope (" + L_available_dst + ")")
+                           required=False,
+                           metavar="SCOPE",
+                           help="Set the DNS to a new scope (" + L_available_dst + ")")
 
     arg_group.add_argument('-g', '--get',
-                        required=False,
-                        action="store_true",
-                        default=False,
-                        help="Get the name of the currently used profile")
+                           required=False,
+                           action="store_true",
+                           default=False,
+                           help="Get the name of the currently used profile")
 
     args = parser.parse_args()
 
