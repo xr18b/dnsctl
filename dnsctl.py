@@ -12,10 +12,10 @@ from sys import exit
 '''
 Defining global variables
 '''
-G_dst_dir = "/code/resolv/" # Where the destination files are stored
-G_resolv_path = "/etc/resolv.conf" # Where the 'resolv.conf' file is store on the system
-G_resolv_isLink = os.path.islink(G_resolv_path) # Wether the 'resolv.conf' file is already a symlink
-if G_resolv_isLink : G_init_dst = os.readlink(G_resolv_path) # If 'resolv.conf' is a link, the current destination
+G_dst_dir = "/code/resolv/"  # Where the destination files are stored
+G_resolv_path = "/etc/resolv.conf"  # Where the 'resolv.conf' file is store on the system
+G_resolv_isLink = os.path.islink(G_resolv_path)  # Wether the 'resolv.conf' file is already a symlink
+if G_resolv_isLink : G_init_dst = os.readlink(G_resolv_path)  # If 'resolv.conf' is a link, the current destination
 
 
 def get_available_dst() -> str:
@@ -67,7 +67,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(usage="%(prog)s [options]",
                                      description="Set DNS for the whole system, or query status of current DNS configuration.")
 
-    arg_group = parser.add_mutually_exclusive_group() # The 'set' and 'get' arguments cannot be used at the same time
+    arg_group = parser.add_mutually_exclusive_group()  # The 'set' and 'get' arguments cannot be used at the same time
 
     arg_group.add_argument('-s', '--set',
                         required=False,
