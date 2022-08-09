@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-'''
-Importing requried libraries
-'''
+"""
+Importing required libraries
+"""
 import os
 import argparse
 import glob
@@ -14,15 +14,15 @@ Defining global variables
 '''
 G_dst_dir = "/code/resolv/"  # Where the destination files are stored
 G_resolv_path = "/etc/resolv.conf"  # Where the 'resolv.conf' file is store on the system
-G_resolv_isLink = os.path.islink(G_resolv_path)  # Wether the 'resolv.conf' file is already a symlink
+G_resolv_isLink = os.path.islink(G_resolv_path)  # Whether the 'resolv.conf' file is already a symlink
 if G_resolv_isLink: G_init_dst = os.readlink(G_resolv_path)  # If 'resolv.conf' is a link, the current destination
 
 
 def get_available_dst() -> str:
-    '''
+    """
     Return a string containing the names of all available destination file
     Note the file names will get trimmed of the '.resolv.conf' that they need to have at the end
-    '''
+    """
     if not os.path.exists(G_dst_dir) or not os.path.isdir(G_dst_dir):
         raise NotADirectoryError('Directory \'{}\' does not exist!'.format(G_dst_dir))
 
@@ -54,9 +54,9 @@ def get_destination() -> None:
 
 
 def main() -> None:
-
+    _available_dst = ""
     try:
-        L_available_dst = get_available_dst()
+        _available_dst = get_available_dst()
     except NotADirectoryError:
         exit(f"ERROR: Directory '{G_dst_dir}' does not exists")
     except FileNotFoundError:
@@ -65,14 +65,14 @@ def main() -> None:
         exit(f"ERROR: {error}")
 
     parser = argparse.ArgumentParser(usage="%(prog)s [options]",
-                                     description="Set DNS for the whole system, or query status of current DNS configuration.")
+                                     description="Set DNS for the whole system, or query current DNS configuration.")
 
     arg_group = parser.add_mutually_exclusive_group()  # The 'set' and 'get' arguments cannot be used at the same time
 
     arg_group.add_argument('-s', '--set',
                            required=False,
                            metavar="SCOPE",
-                           help="Set the DNS to a new scope (" + L_available_dst + ")")
+                           help=f"Set the DNS to a new scope ({_available_dst})")
 
     arg_group.add_argument('-g', '--get',
                            required=False,
